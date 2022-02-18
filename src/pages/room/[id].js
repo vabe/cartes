@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
+import { TrashIcon } from "@heroicons/react/solid";
 import { votingSystems } from "../../utils/constants";
 import useRoom from "../../hooks/use-room";
 import Card from "../../components/card";
@@ -11,7 +12,7 @@ export default function Room() {
   const [roomName, setRoomName] = useState("");
   const [roomVotingType, setRoomVotingType] = useState();
 
-  const { votes, sendVote } = useRoom(roomId ? roomId : "");
+  const { votes, sendVote, removeOwnVote } = useRoom(roomId ? roomId : "");
 
   useEffect(() => {
     setRoomVotingType(router.query.votingType);
@@ -21,6 +22,10 @@ export default function Room() {
 
   function handleCardClick(cardValue) {
     sendVote(cardValue);
+  }
+
+  function handleRemoveVote() {
+    removeOwnVote();
   }
 
   if (!roomVotingType) return "Loading";
@@ -40,7 +45,7 @@ export default function Room() {
         </div>
       </div>
       <div className="grow">
-        <div className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="border-4 border-dashed border-gray-200 rounded-lg h-72">
               <div className="h-full flex items-center justify-center flex-wrap">
@@ -51,7 +56,7 @@ export default function Room() {
                       vote.ownVote && "bg-indigo-400 text-white"
                     }`}
                   >
-                    {vote.body}
+                    {vote.value}
                   </h1>
                 ))}
               </div>
@@ -59,16 +64,37 @@ export default function Room() {
           </div>
         </div>
       </div>
+      {votes.find((vote) => vote.ownVote) !== undefined && (
+        <div className="flex flex-wrap justify-center">
+          <button
+            type="submit"
+            className="group relative w-44 flex justify-center py-2 px-4 mb-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={handleRemoveVote}
+          >
+            <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+              <TrashIcon
+                className="h-5 w-5 text-indigo-100 group-hover:text-indigo-50"
+                aria-hidden="true"
+              />
+            </span>
+            Delete vote
+          </button>
+        </div>
+      )}
       <div className="cards flex flex-wrap gap-4 justify-center">
         {votingSystems
           .find((votingSystem) => votingSystem.name === roomVotingType)
-          .values.map((value) => (
-            <Card
-              key={uuidv4()}
-              value={value}
-              onClick={() => handleCardClick(value)}
-            />
-          ))}
+          .values.map((value) =>
+            votes.find((vote) => vote.ownVote) === undefined ? (
+              <Card
+                key={uuidv4()}
+                value={value}
+                onClick={() => handleCardClick(value)}
+              />
+            ) : (
+              <Card key={uuidv4()} value={value} disabled />
+            )
+          )}
       </div>
     </div>
   );

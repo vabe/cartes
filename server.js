@@ -13,6 +13,7 @@ const { createServer } = require("http");
 const CONNECT_EVENT = "connection";
 const DISCONNECT_EVENT = "disconnect";
 const NEW_VOTE_EVENT = "newVoteEvent";
+const REMOVE_VOTE_EVENT = "removeVoteEvent";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = express.static(__dirname);
@@ -38,6 +39,10 @@ nextApp.prepare().then(async () => {
 
     socket.on(NEW_VOTE_EVENT, (data) => {
       io.in(roomId).emit(NEW_VOTE_EVENT, data);
+    });
+
+    socket.on(REMOVE_VOTE_EVENT, (data) => {
+      io.in(roomId).emit(REMOVE_VOTE_EVENT, data);
     });
 
     socket.on(DISCONNECT_EVENT, () => {
