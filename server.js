@@ -1,20 +1,33 @@
-import express from "express";
-import { createServer } from "http";
-import next from "next";
-import * as socketio from "socket.io";
+// import express from "express";
+// import path from "path";
+// import { createServer } from "http";
+// import next from "next";
+// import * as socketio from "socket.io";
+
+const express = require("express");
+const path = require("path");
+const next = require("next");
+const socketio = require("socket.io");
+const { createServer } = require("http");
 
 const CONNECT_EVENT = "connection";
 const DISCONNECT_EVENT = "disconnect";
 const NEW_VOTE_EVENT = "newVoteEvent";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = "localhost";
+const hostname = express.static(__dirname);
 const port = parseInt(process.env.PORT || "4000", 10);
 const nextApp = next({ dev, hostname, port });
 const nextHandler = nextApp.getRequestHandler();
 
 nextApp.prepare().then(async () => {
   const app = express();
+
+  app.use(express.static(__dirname));
+  app.use(express.static(path.join(__dirname, "out")));
+
+  console.log(express.static(__dirname));
+
   const server = createServer(app);
   const io = new socketio.Server();
   io.attach(server);
