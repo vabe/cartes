@@ -5,17 +5,17 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": " next start",
+    "start": "cross-env NODE_ENV=production node server.js",
     "lint": "next lint"
   },
   "dependencies": {
     "@headlessui/react": "^1.5.0",
     "@heroicons/react": "^1.0.5",
+    "cross-env": "^7.0.3",
     "express": "^4.17.3",
     "next": "12.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "socket-io": "^1.0.0",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.4.1",
     "uuid": "^8.3.2"
