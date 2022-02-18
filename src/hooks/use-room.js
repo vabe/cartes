@@ -2,10 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
 
 const NEW_VOTE_EVENT = "newVoteEvent";
-const SOCKET_SERVER_URL = `http://localhost:${parseInt(
-  process.env.PORT || "4000",
-  10
-)}`;
+const SOCKET_SERVER_URL = `/`;
 
 const useRoom = (roomId) => {
   const [votes, setVotes] = useState([]);
