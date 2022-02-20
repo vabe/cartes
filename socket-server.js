@@ -11,6 +11,7 @@ const NEW_VOTE_EVENT = "newVoteEvent";
 io.on("connection", (socket) => {
   // Join a conversation
   const { roomId } = socket.handshake.query;
+
   socket.join(roomId);
 
   // Listen for new messages

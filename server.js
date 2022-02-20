@@ -20,8 +20,11 @@ const nextHandler = nextApp.getRequestHandler();
 nextApp.prepare().then(async () => {
   const app = express();
 
-  app.use(express.static(__dirname));
-  app.use(express.static(path.join(__dirname, "out")));
+  if (dev) {
+    app.use(express.static(__dirname));
+  } else {
+    app.use(express.static(path.join(__dirname, "out")));
+  }
 
   const server = createServer(app);
   const io = new socketio.Server();
@@ -30,6 +33,7 @@ nextApp.prepare().then(async () => {
 
   io.on(CONNECT_EVENT, (socket) => {
     const { roomId } = socket.handshake.query;
+
     socket.join(roomId);
 
     socket.on(NEW_VOTE_EVENT, (data) => {

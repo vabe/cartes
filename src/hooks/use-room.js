@@ -14,48 +14,51 @@ const useRoom = (roomId) => {
   const socketRef = useRef();
 
   useEffect(() => {
-    socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
-      query: { roomId },
-    });
+    if (roomId !== "") {
+      socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
+        query: { roomId },
+      });
 
-    socketRef.current.on(NEW_VOTE_EVENT, (vote) => {
-      const incomingVote = {
-        ...vote,
-        ownVote: vote.senderId === socketRef.current.id,
-        isRevealed: false,
+      socketRef.current.on(NEW_VOTE_EVENT, (vote) => {
+        const incomingVote = {
+          ...vote,
+          ownVote: vote.senderId === socketRef.current.id,
+          isRevealed: false,
+        };
+
+        setVotes((previousVotes) => [...previousVotes, incomingVote]);
+      });
+
+      socketRef.current.on(REMOVE_VOTE_EVENT, (vote) => {
+        setVotes((previousVotes) => {
+          return previousVotes.filter(
+            (previousVote) => previousVote.senderId !== vote.senderId
+          );
+        });
+      });
+
+      socketRef.current.on(REMOVE_VOTES_EVENT, () => {
+        setVotes([]);
+        setAverage(0);
+      });
+
+      socketRef.current.on(REVEAL_VOTES_EVENT, (updatedAverage) => {
+        setVotes((previousVotes) => {
+          const updatedVotes = previousVotes.map((previousVote) => ({
+            ...previousVote,
+            isRevealed: true,
+          }));
+
+          return updatedVotes;
+        });
+
+        setAverage(updatedAverage);
+      });
+
+      return () => {
+        socketRef.current.disconnect();
       };
-
-      setVotes((previousVotes) => [...previousVotes, incomingVote]);
-    });
-
-    socketRef.current.on(REMOVE_VOTE_EVENT, (vote) => {
-      setVotes((previousVotes) => {
-        return previousVotes.filter(
-          (previousVote) => previousVote.senderId !== vote.senderId
-        );
-      });
-    });
-
-    socketRef.current.on(REMOVE_VOTES_EVENT, () => {
-      setVotes([]);
-    });
-
-    socketRef.current.on(REVEAL_VOTES_EVENT, (updatedAverage) => {
-      setVotes((previousVotes) => {
-        const updatedVotes = previousVotes.map((previousVote) => ({
-          ...previousVote,
-          isRevealed: true,
-        }));
-
-        return updatedVotes;
-      });
-
-      setAverage(updatedAverage);
-    });
-
-    return () => {
-      socketRef.current.disconnect();
-    };
+    }
   }, [roomId]);
 
   const sendVote = (vote) => {
@@ -73,14 +76,15 @@ const useRoom = (roomId) => {
 
   const removeAllVotes = () => {
     socketRef.current.emit(REMOVE_VOTES_EVENT);
-    setAverage(0);
   };
 
   const revealVotes = () => {
     const sumOfVotes = votes.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.value,
+      (accumulator, currentValue) =>
+        accumulator + parseInt(currentValue.value, 10),
       0
     );
+
     const updatedAverage = sumOfVotes / votes.length;
 
     socketRef.current.emit(REVEAL_VOTES_EVENT, updatedAverage);

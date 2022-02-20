@@ -7,7 +7,7 @@ export default function Card({ value, disabled, ...rest }) {
       }`}
       {...rest}
     >
-      <p className="text-lg font-bold px-6 py-6">{value}</p>
+      <p className="text-lg font-bold px-4 py-4 md:px-6 md:py-6">{value}</p>
     </div>
   );
 }
