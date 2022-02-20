@@ -1,9 +1,3 @@
-// import express from "express";
-// import path from "path";
-// import { createServer } from "http";
-// import next from "next";
-// import * as socketio from "socket.io";
-
 const express = require("express");
 const path = require("path");
 const next = require("next");
@@ -12,8 +6,10 @@ const { createServer } = require("http");
 
 const CONNECT_EVENT = "connection";
 const DISCONNECT_EVENT = "disconnect";
-const NEW_VOTE_EVENT = "newVoteEvent";
-const REMOVE_VOTE_EVENT = "removeVoteEvent";
+const NEW_VOTE_EVENT = "new-vote-event";
+const REMOVE_VOTE_EVENT = "remove-vote-event";
+const REMOVE_VOTES_EVENT = "remove-votes-event";
+const REVEAL_VOTES_EVENT = "reveal-votes-event";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = express.static(__dirname);
@@ -27,10 +23,9 @@ nextApp.prepare().then(async () => {
   app.use(express.static(__dirname));
   app.use(express.static(path.join(__dirname, "out")));
 
-  console.log(express.static(__dirname));
-
   const server = createServer(app);
   const io = new socketio.Server();
+
   io.attach(server);
 
   io.on(CONNECT_EVENT, (socket) => {
@@ -45,6 +40,14 @@ nextApp.prepare().then(async () => {
       io.in(roomId).emit(REMOVE_VOTE_EVENT, data);
     });
 
+    socket.on(REMOVE_VOTES_EVENT, () => {
+      io.in(roomId).emit(REMOVE_VOTES_EVENT);
+    });
+
+    socket.on(REVEAL_VOTES_EVENT, (data) => {
+      io.in(roomId).emit(REVEAL_VOTES_EVENT, data);
+    });
+
     socket.on(DISCONNECT_EVENT, () => {
       socket.leave(roomId);
     });
@@ -53,6 +56,6 @@ nextApp.prepare().then(async () => {
   app.all("*", (req, res) => nextHandler(req, res));
 
   server.listen(port, () => {
-    console.log(`> Ready on http://localhost:${port}`);
+    console.log(`> Ready on ${port}`);
   });
 });

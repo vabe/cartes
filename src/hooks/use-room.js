@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import socketIOClient from "socket.io-client";
-
-const NEW_VOTE_EVENT = "newVoteEvent";
-const REMOVE_VOTE_EVENT = "removeVoteEvent";
-const SOCKET_SERVER_URL = `/`;
+import {
+  SOCKET_SERVER_URL,
+  NEW_VOTE_EVENT,
+  REMOVE_VOTE_EVENT,
+  REMOVE_VOTES_EVENT,
+  REVEAL_VOTES_EVENT,
+} from "../utils/constants";
 
 const useRoom = (roomId) => {
   const [votes, setVotes] = useState([]);
+  const [average, setAverage] = useState(0);
   const socketRef = useRef();
 
   useEffect(() => {
@@ -15,12 +19,13 @@ const useRoom = (roomId) => {
     });
 
     socketRef.current.on(NEW_VOTE_EVENT, (vote) => {
-      const incomingVotes = {
+      const incomingVote = {
         ...vote,
         ownVote: vote.senderId === socketRef.current.id,
+        isRevealed: false,
       };
 
-      setVotes((previousVotes) => [...previousVotes, incomingVotes]);
+      setVotes((previousVotes) => [...previousVotes, incomingVote]);
     });
 
     socketRef.current.on(REMOVE_VOTE_EVENT, (vote) => {
@@ -29,6 +34,23 @@ const useRoom = (roomId) => {
           (previousVote) => previousVote.senderId !== vote.senderId
         );
       });
+    });
+
+    socketRef.current.on(REMOVE_VOTES_EVENT, () => {
+      setVotes([]);
+    });
+
+    socketRef.current.on(REVEAL_VOTES_EVENT, (updatedAverage) => {
+      setVotes((previousVotes) => {
+        const updatedVotes = previousVotes.map((previousVote) => ({
+          ...previousVote,
+          isRevealed: true,
+        }));
+
+        return updatedVotes;
+      });
+
+      setAverage(updatedAverage);
     });
 
     return () => {
@@ -49,7 +71,29 @@ const useRoom = (roomId) => {
     });
   };
 
-  return { votes, sendVote, removeOwnVote };
+  const removeAllVotes = () => {
+    socketRef.current.emit(REMOVE_VOTES_EVENT);
+    setAverage(0);
+  };
+
+  const revealVotes = () => {
+    const sumOfVotes = votes.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.value,
+      0
+    );
+    const updatedAverage = sumOfVotes / votes.length;
+
+    socketRef.current.emit(REVEAL_VOTES_EVENT, updatedAverage);
+  };
+
+  return {
+    votes,
+    average,
+    sendVote,
+    removeOwnVote,
+    removeAllVotes,
+    revealVotes,
+  };
 };
 
 export default useRoom;
