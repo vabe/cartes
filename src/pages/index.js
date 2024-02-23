@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { Dialog } from "@headlessui/react";
 import { v4 as uuidv4 } from "uuid";
 import { votingSystems } from "../utils/constants";
+import Button from "../components/button";
 
 export default function Home() {
   const router = useRouter();
@@ -40,40 +41,31 @@ export default function Home() {
       <main className="flex flex-col px-4 h-full lg:max-w-5xl">
         <div className="py-12 bg-white">
           <div className="max-w-7xl">
-            <div className="">
-              <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
-                Cartes
-              </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Online planning poker
-              </p>
-              <p className="mt-4 max-w-2xl text-xl text-gray-500">
-                A consensus-based, gamified technique for estimating.
-              </p>
-              <p className="mt-4 max-w-2xl text-xl text-gray-500">
-                Members of the group make estimates by playing numbered cards
-                face-down to the table, instead of speaking them aloud. The
-                cards are revealed, and the estimates are then discussed. This
-                way, the group can avoid the cognitive bias of anchoring, where
-                the first number spoken aloud sets a precedent for subsequent
-                estimates.
-              </p>
-            </div>
+            <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+              Cartes
+            </h2>
+            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              Online planning poker
+            </p>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500">
+              A consensus-based, gamified technique for estimating.
+            </p>
+            <p className="mt-4 max-w-2xl text-xl text-gray-500">
+              Members of the group make estimates by playing numbered cards
+              face-down to the table, instead of speaking them aloud. The cards
+              are revealed, and the estimates are then discussed. This way, the
+              group can avoid the cognitive bias of anchoring, where the first
+              number spoken aloud sets a precedent for subsequent estimates.
+            </p>
           </div>
         </div>
         <div className="max-w-7xl lg:px-8 flex-grow border-4 border-dashed border-gray-200 rounded-lg mb-10">
           <div className="h-full flex items-center justify-center">
-            <button
-              type="button"
-              onClick={toggleModal}
-              className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-lg"
-            >
-              Create room
-            </button>
+            <Button onClick={toggleModal}>Create room</Button>
           </div>
           <Modal open={isOpen} toggleModal={toggleModal}>
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div className="bg-white md:px-6 md:pt-5 md:pb-4">
                 <div className="mt-3 text-center">
                   <Dialog.Title
                     as="h3"

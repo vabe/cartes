@@ -7,11 +7,11 @@ export default function Button({ children, onClick, light, disabled }) {
   const disabledColor =
     "border-2 border-solid border-indigo-200 text-indigo-200 bg-slate-50 hover:bg-slate-100 cursor-not-allowed";
 
+  const color = light ? lightColor : defaultColor;
+
   return (
     <button
-      className={`${buttonStyle} ${
-        disabled ? disabledColor : light ? lightColor : defaultColor
-      }`}
+      className={`${buttonStyle} ${disabled ? disabledColor : color}`}
       onClick={onClick}
       disabled={disabled}
     >
