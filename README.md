@@ -1,8 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Cartes
 
-## Getting Started
+An online planning poker application to help agile teams, built in NextJS 12.
 
-First, run the development server:
+## ⚙️ Getting started
+
+The project requires that you have [Node](https://nodejs.org/en) running on your machine. It has been tested using `v20.9.0`.
+
+### ⏳ Installation
+
+First, install the dependencies:
+
+```bash
+npm i
+# or
+yarn
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
@@ -10,25 +24,39 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:4000](http://localhost:4000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## 🏗️ Structure
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+The overall structure can be seen in the tree representation below, and can be broken down into the following sections.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```
+.
+└── cartes/
+    ├── src/
+    │   ├── components/       # reusable components
+    │   │   ├── button
+    │   │   ├── card
+    │   │   └── model
+    │   ├── hooks             # custom behaviour hooks
+    │   │   ├── use-modal.js
+    │   │   └── use-room.js
+    │   ├── pages/            # file system-based routing
+    │   │   ├── room/
+    │   │   │   └── [id].js
+    │   │   ├── _app.js
+    │   │   └── index.js
+    │   └── utils/
+    │       ├── constants.js
+    │       └── ...
+    ├── ...
+    └── server.js             # SocketIO server implementation
+```
 
-## Learn More
+## 📚 Learn more
 
-To learn more about Next.js, take a look at the following resources:
+**Planning poker** is an agile estimation technique used by teams to estimate the effort required for each user story or task in a sprint. Each team member independently assigns a relative size or effort to the item being estimated using a set of predetermined values, such as Fibonacci numbers. After everyone has made their estimation, team members discuss their estimates and reasoning, aiming to reach a consensus on the effort required before moving forward with the task. This collaborative approach helps teams align on expectations, improve accuracy in estimation, and foster better communication and understanding among team members.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[Socket.IO](https://socket.io/) is a JavaScript library that enables real-time, bidirectional communication between web clients and servers. It builds upon the WebSocket protocol, which provides a persistent connection between the client and server, allowing for efficient, low-latency data exchange. Socket.IO abstracts away the complexities of working directly with WebSockets by providing a simple yet powerful API that developers can use to implement real-time features in their web applications.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Tailwind CSS](https://tailwindcss.com/) is a utility-first CSS framework that provides a comprehensive set of pre-designed utility classes to streamline the process of building modern and responsive web interfaces. Unlike traditional CSS frameworks that come with predefined components and styles, Tailwind CSS focuses on providing utility classes that represent specific CSS properties and values. These utility classes can be directly applied to HTML elements to style them without writing custom CSS.
